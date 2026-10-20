@@ -1,0 +1,12 @@
+{
+  "name": "sandbox-api",
+  "version": "1.0.0",
+  "description": "Tiny API for the Day 2 Render sandbox",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

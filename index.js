@@ -11,6 +11,28 @@ const pool = process.env.DATABASE_URL
   ? new Pool({ connectionString: process.env.DATABASE_URL, max: 1 })
   : null;
 
+// ---------- CORS: which websites may call this API from the browser ----------
+const allowedOrigins = [
+  "http://localhost:3000",                       // local development
+  "https://sandbox-frontend-seven.vercel.app",   // production frontend
+];
+// Vercel preview deployments of the frontend, e.g. sandbox-frontend-git-connect-api-suvethica-sivarasa.vercel.app
+const previewPattern = /^https:\/\/sandbox-frontend-[a-z0-9-]+-suvethica-sivarasa\.vercel\.app$/;
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && (allowedOrigins.includes(origin) || previewPattern.test(origin))) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Methods", "GET");
+    res.setHeader("Vary", "Origin");
+  }
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+  next();
+});
+// -----------------------------------------------------------------------------
+
 // Home page
 app.get("/", (req, res) => {
   res.send("Suvethii's sandbox API is running");

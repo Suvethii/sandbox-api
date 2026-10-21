@@ -13,15 +13,21 @@ const pool = process.env.DATABASE_URL
 
 // ---------- CORS: which websites may call this API from the browser ----------
 const allowedOrigins = [
-  "http://localhost:3000",                       // local development
-  "https://sandbox-frontend-seven.vercel.app",   // production frontend
+  "http://localhost:3000",                         // local development
+  "https://sandbox-frontend-seven.vercel.app",     // production frontend (Vercel)
+  "https://suvethii-sandbox-frontend.netlify.app", // production frontend (Netlify)
 ];
-// Vercel preview deployments of the frontend, e.g. sandbox-frontend-git-connect-api-suvethica-sivarasa.vercel.app
-const previewPattern = /^https:\/\/sandbox-frontend-[a-z0-9-]+-suvethica-sivarasa\.vercel\.app$/;
+// Preview deployments of the frontend
+const previewPatterns = [
+  /^https:\/\/sandbox-frontend-[a-z0-9-]+-suvethica-sivarasa\.vercel\.app$/,  // Vercel previews
+  /^https:\/\/deploy-preview-\d+--suvethii-sandbox-frontend\.netlify\.app$/,  // Netlify deploy previews
+];
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (origin && (allowedOrigins.includes(origin) || previewPattern.test(origin))) {
+  const allowed =
+    origin && (allowedOrigins.includes(origin) || previewPatterns.some((p) => p.test(origin)));
+  if (allowed) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Access-Control-Allow-Methods", "GET");
     res.setHeader("Vary", "Origin");
